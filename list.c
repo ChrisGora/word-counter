@@ -11,8 +11,16 @@ struct list {
     item b;
 };
 
+struct node {
+    struct node *prev;
+    item x;
+    struct node *next;
+};
+
+//------------------------------------------------------------------------------
+
 list *newList() {
-    return 0;
+    return NULL;
 }
 
 void start(list *l) {
@@ -85,7 +93,7 @@ void testEnd() {
 
 }
 
-void listMain() {
+int listMain() {
     testNew;
     testStart;
     testEnd;
