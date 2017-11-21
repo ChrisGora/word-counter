@@ -30,12 +30,8 @@ list *newList() {
     list *l = malloc(sizeof(list));
     node *senStart = malloc(sizeof(node));
     node *senEnd = malloc(sizeof(node));
-    *senStart = (node) {NULL,0,senEnd,true};
-    *senEnd = (node) {senStart,0,NULL,true};
-//    l->start = senStart->next;
-//    l->end = senEnd;
-//    l->position
-//    l->length = 0;
+    *senStart = (node) {NULL, 0, senEnd, true};
+    *senEnd = (node) {senStart, 0, NULL, true};
     *l = (list) {senStart->next, senEnd, senStart->next, 0};
     return l;
 }
@@ -57,13 +53,22 @@ bool atEnd(list *l) {
 }
 
 void forward(list *l) {
-
+    printf("in forward\n");
+    node *current = l->position;
+    printf("x in current %d \n", current->x);
+    printf("isSentinel %d \n", current->sentinel);
+    if (current->sentinel == true) printf("You reached the end of the list\n");
+    else {
+        node *next = l->position->next;
+        l->position = next;
+    }
 }
 
 void backward(list *l) {
 
 }
 
+//TODO: Fix pointer re-assignment!!!
 void insertBefore(list *l, item x) {
     node *left = l->position->prev;
     node *right = l->position;
@@ -116,6 +121,10 @@ void testNew() {
 void testStart() {
     list *l = newList();
     insertBefore(l, 24);
+    insertBefore(l, 12);
+    insertBefore(l, 2);
+    insertBefore(l, 3);
+    insertBefore(l, 567);
     start(l);
     assert(l->position == l->start);
     printf("Start passed\n");
@@ -158,7 +167,36 @@ void testInsertBefore() {
     assert (atEnd(l) == true);
     assert (l->position->prev->sentinel == false);
     assert(l->length == lengthBefore + 1);
+    assert(l->position->prev->x == 5);
+
+    lengthBefore = l->length;
+    insertBefore(l, 34);
+    assert (l->position->sentinel == true);
+    assert (atEnd(l) == true);
+    assert (l->position->prev->sentinel == false);
+    assert(l->length == lengthBefore + 1);
+    assert(l->position->prev->x == 34);
     printf("insertBefore passed\n");
+}
+
+void testForward() {
+    list *l = newList();
+    insertBefore(l, 243);
+    insertBefore(l, 1006);
+    insertBefore(l, 12);
+    insertBefore(l, 5);
+    start(l);
+    printf("%d \n", l->position->x);
+    assert(atStart(l) == true);
+    node *expectedNewPosition = l->position->next;
+    forward(l);
+    node *positionAfter = l->position;
+    assert(expectedNewPosition == positionAfter);
+    printf("Forward passed\n");
+}
+
+void testBackward() {
+    printf("Backward passed\n");
 }
 
 int listMain() {
@@ -168,6 +206,8 @@ int listMain() {
     testAtStart();
     testAtEnd();
     testInsertBefore();
+    testForward();
+    testBackward();
     printf("All tests passed\n");
     return 0;
 }
