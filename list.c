@@ -65,7 +65,13 @@ void backward(list *l) {
 }
 
 void insertBefore(list *l, item x) {
-    item *left = l->position->prev;
+    node *left = l->position->prev;
+    node *right = l->position;
+    node *new = malloc(sizeof(node));
+    *new = (node) {left, x, right, false};
+    right->prev = new;
+    left->next = new;
+    l->length = l->length + 1;
 }
 
 void insertAfter(list *l, item x) {
@@ -100,7 +106,6 @@ void deleteAfter(list *l) {
 
 void testNew() {
     list *l = newList();
-    printf("%d\n", l->start->prev);
     assert(l->start->prev->prev == NULL);
     assert(l->end->next == NULL);
     assert(l->start->prev->next != NULL);
