@@ -30,16 +30,18 @@ list *newList() {
     node *senEnd = malloc(sizeof(node));
     *senStart = (node) {NULL,0,senEnd,true};
     *senEnd = (node) {senStart,0,NULL,true};
-    l->start = senStart;
+    l->start = senStart->next;
+    l->end = senEnd;
+    l->length = 0;
     return l;
 }
 
 void start(list *l) {
-
+    l->position = l->start;
 }
 
 void end(list *l) {
-
+    l->position = l->end;
 }
 
 bool atStart(list *l) {
@@ -101,11 +103,15 @@ void testNew() {
 }
 
 void testStart() {
-
+    list *l = newList();
+    start(l);
+    assert(l->position == l->start);
 }
 
 void testEnd() {
-
+    list *l = newList();
+    end(l);
+    assert(l->position == l->end);
 }
 
 int listMain() {
