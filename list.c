@@ -24,6 +24,8 @@ struct list {
 
 //------------------------------------------------------------------------------
 
+//start is set at the first real item
+//end is set at senEnd
 list *newList() {
     list *l = malloc(sizeof(list));
     node *senStart = malloc(sizeof(node));
@@ -45,11 +47,11 @@ void end(list *l) {
 }
 
 bool atStart(list *l) {
-    return false;
+    return (l->position == l->start);
 }
 
 bool atEnd(list *l) {
-    return false;
+    return (l->position == l->end);
 }
 
 void forward(list *l) {
@@ -112,6 +114,18 @@ void testEnd() {
     list *l = newList();
     end(l);
     assert(l->position == l->end);
+}
+
+void testAtStart {
+    list *l = newList();
+    start(l);
+    assert(atStart(l) == true);
+}
+
+void testAtEnd {
+    list *l = newList();
+    end(l);
+    assert(atEnd(l) == true);
 }
 
 int listMain() {
