@@ -6,21 +6,32 @@
 #include <string.h>
 #include <assert.h>
 
-struct list {
-    item a;
-    item b;
-};
-
 struct node {
     struct node *prev;
     item x;
     struct node *next;
+    bool sentinel;
+};
+
+typedef struct node node;
+
+struct list {
+    node *start;
+    node *end;
+    node *position;
+    int length;
 };
 
 //------------------------------------------------------------------------------
 
 list *newList() {
-    return NULL;
+    list *l = malloc(sizeof(list));
+    node *senStart = malloc(sizeof(node));
+    node *senEnd = malloc(sizeof(node));
+    *senStart = (node) {NULL,0,senEnd,true};
+    *senEnd = (node) {senStart,0,NULL,true};
+    l->start = senStart;
+    return l;
 }
 
 void start(list *l) {
@@ -79,10 +90,14 @@ void deleteAfter(list *l) {
 
 }
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void testNew() {
-
+    list *l = newList();
+    assert(l->start->prev == NULL);
+    assert(l->end->next == NULL);
+    assert(l->start->next != NULL);
+    assert(l->end->prev != NULL);
 }
 
 void testStart() {
@@ -97,5 +112,6 @@ int listMain() {
     testNew;
     testStart;
     testEnd;
+    printf("All tests passed\n");
     return 0;
 }
