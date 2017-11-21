@@ -115,6 +115,7 @@ void testNew() {
 
 void testStart() {
     list *l = newList();
+    insertBefore(l, 24);
     start(l);
     assert(l->position == l->start);
     printf("Start passed\n");
@@ -122,6 +123,9 @@ void testStart() {
 
 void testEnd() {
     list *l = newList();
+    insertBefore(l, 24);
+    start(l);
+    insertBefore(l, 10);
     end(l);
     assert(l->position == l->end);
     printf("End passed\n");
@@ -129,6 +133,7 @@ void testEnd() {
 
 void testAtStart() {
     list *l = newList();
+    insertBefore(l, 24);
     start(l);
     assert(atStart(l) == true);
     printf("atStart passed\n");
@@ -136,6 +141,9 @@ void testAtStart() {
 
 void testAtEnd() {
     list *l = newList();
+    insertBefore(l, 24);
+    start(l);
+    insertBefore(l, 10);
     end(l);
     assert(atEnd(l) == true);
     printf("atEnd passed\n");
