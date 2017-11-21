@@ -32,9 +32,11 @@ list *newList() {
     node *senEnd = malloc(sizeof(node));
     *senStart = (node) {NULL,0,senEnd,true};
     *senEnd = (node) {senStart,0,NULL,true};
-    l->start = senStart->next;
-    l->end = senEnd;
-    l->length = 0;
+//    l->start = senStart->next;
+//    l->end = senEnd;
+//    l->position
+//    l->length = 0;
+    *l = (list) {senStart->next, senEnd, senStart->next, 0};
     return l;
 }
 
@@ -63,7 +65,7 @@ void backward(list *l) {
 }
 
 void insertBefore(list *l, item x) {
-
+    item *left = l->position->prev;
 }
 
 void insertAfter(list *l, item x) {
@@ -98,40 +100,61 @@ void deleteAfter(list *l) {
 
 void testNew() {
     list *l = newList();
-    assert(l->start->prev == NULL);
+    printf("%d\n", l->start->prev);
+    assert(l->start->prev->prev == NULL);
     assert(l->end->next == NULL);
-    assert(l->start->next != NULL);
+    assert(l->start->prev->next != NULL);
     assert(l->end->prev != NULL);
+    printf("New passed\n");
 }
 
 void testStart() {
     list *l = newList();
     start(l);
     assert(l->position == l->start);
+    printf("Start passed\n");
 }
 
 void testEnd() {
     list *l = newList();
     end(l);
     assert(l->position == l->end);
+    printf("End passed\n");
 }
 
-void testAtStart {
+void testAtStart() {
     list *l = newList();
     start(l);
     assert(atStart(l) == true);
+    printf("atStart passed\n");
 }
 
-void testAtEnd {
+void testAtEnd() {
     list *l = newList();
     end(l);
     assert(atEnd(l) == true);
+    printf("atEnd passed\n");
+}
+
+void testInsertBefore() {
+    list *l = newList();
+    int lengthBefore = l->length;
+    end(l);
+    insertBefore(l, 5);
+    assert (l->position->sentinel == true);
+    assert (atEnd(l) == true);
+    assert (l->position->prev->sentinel == false);
+    assert(l->length == lengthBefore + 1);
+    printf("insertBefore passed\n");
 }
 
 int listMain() {
-    testNew;
-    testStart;
-    testEnd;
+    testNew();
+    testStart();
+    testEnd();
+    testAtStart();
+    testAtEnd();
+    testInsertBefore();
     printf("All tests passed\n");
     return 0;
 }
