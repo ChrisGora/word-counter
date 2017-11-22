@@ -15,14 +15,24 @@ struct node {
 
 typedef struct node node;
 
+//Note that senEnd and end are the same, whereas senStart and start are not
+//It's illegal for position to be "at senStart" (ie. before the sentinel node)
 struct list {
+	node *senStart;
     node *start;
+	node *senEnd;
     node *end;
     node *position;
     int length;
 };
 
 //------------------------------------------------------------------------------
+
+void fail(char *m) {
+	fprintf(stderr, "%s\n", m);
+	exit(1);
+}
+
 
 //start is set at the first real item
 //end is set at senEnd
@@ -32,8 +42,12 @@ list *newList() {
     node *senEnd = malloc(sizeof(node));
     *senStart = (node) {NULL, 0, senEnd, true};
     *senEnd = (node) {senStart, 0, NULL, true};
-    *l = (list) {senStart->next, senEnd, senStart->next, 0};
+    *l = (list) {senStart, senStart->next, senEnd, senEnd, senStart->next, 0};
     return l;
+}
+
+void updateStart(list *l) {
+	l->start = l->senStart->next;
 }
 
 void start(list *l) {
@@ -53,19 +67,21 @@ bool atEnd(list *l) {
 }
 
 void forward(list *l) {
-    printf("in forward\n");
     node *current = l->position;
-    printf("x in current %d \n", current->x);
-    printf("isSentinel %d \n", current->sentinel);
-    if (current->sentinel == true) printf("You reached the end of the list\n");
+	node *next = l->position->next;
+    if (current->sentinel == true) fail("You reached the end of the list");
     else {
-        node *next = l->position->next;
         l->position = next;
     }
 }
 
 void backward(list *l) {
-
+	node *current = l->position;
+	node * next = current->prev;
+	if (next->sentinel == true) fail("You reached the start of the list");
+	else {
+		l->position = next;
+	}
 }
 
 //TODO: Fix pointer re-assignment!!!
@@ -77,6 +93,7 @@ void insertBefore(list *l, item x) {
     right->prev = new;
     left->next = new;
     l->length = l->length + 1;
+	updateStart(l);
 }
 
 void insertAfter(list *l, item x) {
