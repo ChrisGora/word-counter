@@ -28,7 +28,7 @@ struct list {
 
 //------------------------------------------------------------------------------
 
-void fail(char *m) {
+static void fail(char *m) {
 	fprintf(stderr, "%s\n", m);
 	exit(1);
 }
@@ -43,7 +43,7 @@ list *newList() {
     return l;
 }
 
-void updateStart(list *l) {
+static void updateStart(list *l) {
 	l->start = l->senStart->next;
 }
 
@@ -130,6 +130,7 @@ void deleteBefore(list *l) {
     node *delete = right->prev;
 	node *left = delete->prev;
 	if (!(delete->sentinel)) {
+		free(delete);
     	right->prev = left;
     	left->next = right;
     	l->length = l->length - 1;
@@ -147,7 +148,7 @@ void deleteAfter(list *l) {
 
 //------------------------------------------------------------------------------
 
-void assertPosition(list *l, char* c) {
+static void assertPosition(list *l, char* c) {
 	node *current = l->position;
 	node *prev = current->prev;
 	int posArray = strstr(c, "|") - c;
@@ -157,7 +158,7 @@ void assertPosition(list *l, char* c) {
 	if (!(prev->sentinel)) assert(c[posArray - 1] - '0' == current->prev->x);
 }
 
-void assertElementsForward(list *l, char* c) {
+static void assertElementsForward(list *l, char* c) {
 	int i = 0;
 	int length = strlen(c);
 	node *current = l->start;
@@ -174,7 +175,7 @@ void assertElementsForward(list *l, char* c) {
 	}
 }
 
-void assertElementsBackward(list *l, char* c) {
+static void assertElementsBackward(list *l, char* c) {
 	int length = strlen(c) - 1;
 	node *current = l->end->prev;
 	while (length >= 0) {
@@ -190,14 +191,14 @@ void assertElementsBackward(list *l, char* c) {
 	}
 }
 
-void compare(list *l, char* c) {
+static void compare(list *l, char* c) {
 	assertPosition(l, c);
 	assertElementsForward(l, c);
 	assertElementsBackward(l, c);
 	printf("Compare of %s passed\n", c);
 }
 
-void testNew() {
+static void testNew() {
     list *l = newList();
     assert(l->start->prev->prev == NULL);
     assert(l->end->next == NULL);
@@ -207,7 +208,7 @@ void testNew() {
     printf("New passed\n");
 }
 
-void testStart() {
+static void testStart() {
     list *l = newList();
     insertBefore(l, 2);
     insertBefore(l, 1);
@@ -220,7 +221,7 @@ void testStart() {
     printf("Start passed\n");
 }
 
-void testEnd() {
+static void testEnd() {
     list *l = newList();
     insertBefore(l, 2);
     start(l);
@@ -232,7 +233,7 @@ void testEnd() {
     printf("End passed\n");
 }
 
-void testAtStart() {
+static void testAtStart() {
     list *l = newList();
     insertBefore(l, 2);
     start(l);
@@ -241,7 +242,7 @@ void testAtStart() {
     printf("atStart passed\n");
 }
 
-void testAtEnd() {
+static void testAtEnd() {
     list *l = newList();
     insertBefore(l, 4);
     start(l);
@@ -253,7 +254,7 @@ void testAtEnd() {
 	printf("atEnd passed\n");
 }
 
-void testInsertBefore() {
+static void testInsertBefore() {
     list *l = newList();
     int lengthBefore = l->length;
     end(l);
@@ -275,7 +276,7 @@ void testInsertBefore() {
     printf("insertBefore passed\n");
 }
 
-void testForward() {
+static void testForward() {
     list *l = newList();
     insertBefore(l, 2);
     insertBefore(l, 1);
@@ -294,7 +295,7 @@ void testForward() {
     printf("Forward passed\n");
 }
 
-void testBackward() {
+static void testBackward() {
     list *l = newList();
     insertBefore(l, 2);
     insertBefore(l, 1);
@@ -308,7 +309,7 @@ void testBackward() {
     printf("Backward passed\n");
 }
 
-void testInsertAfter() {
+static void testInsertAfter() {
     list *l = newList();
     int lengthBefore = l->length;
     end(l);
@@ -330,7 +331,7 @@ void testInsertAfter() {
     printf("insertAfter passed\n");
 }
 
-void testSetBefore() {
+static void testSetBefore() {
     list *l = newList();
     insertBefore(l, 2);
     insertBefore(l, 1);
@@ -343,7 +344,7 @@ void testSetBefore() {
 	compare(l, "212|5");
 }
 
-void testSetAfter() {
+static void testSetAfter() {
     list *l = newList();
     insertBefore(l, 2);
     insertBefore(l, 1);
@@ -356,7 +357,7 @@ void testSetAfter() {
 	compare(l, "211|2");
 }
 
-void testDelete() {
+static void testDelete() {
 	list *l = newList();
     insertBefore(l, 3);
     insertBefore(l, 6);
@@ -376,28 +377,28 @@ void testDelete() {
 	compare(l, "|");
 }
 
-void manualErrorTest1() {
+static void manualErrorTest1() {
 	list *l = newList();
 	insertBefore(l, 3);
     insertBefore(l, 6);
 	deleteAfter(l);
 }
 
-void manualErrorTest2() {
+static void manualErrorTest2() {
 	list *l = newList();
 	insertAfter(l, 3);
     insertAfter(l, 6);
 	deleteBefore(l);
 }
 
-void manualErrorTest3() {
+static void manualErrorTest3() {
 	list *l = newList();
 	insertBefore(l, 3);
     insertBefore(l, 6);
 	forward(l);
 }
 
-void manualErrorTest4() {
+static void manualErrorTest4() {
 	list *l = newList();
 	insertAfter(l, 3);
     insertAfter(l, 6);
