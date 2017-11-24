@@ -12,11 +12,12 @@ typedef struct tst tst;
 tst *newTst();
 
 // Insert a string into a TST. It is illegal to inser a string that already exists.
-void insert(tst *t, int x, char *c);
+void insertString(tst *t, int x, char *c);
 
 // Search for a string and return its associated value if found, or NULL if not found.
 int search(tst *t, char *c);
 
 // Remove a string by setting its value to NULL. If possible also remove any 
 // unused nodes. 
-int remove(tst *t, char *c);
+void removeString(tst *t, char *c);
+

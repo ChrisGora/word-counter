@@ -1,3 +1,9 @@
+.PHONY: list tst listC
+
 list: list.h list.c
 	gcc -DlistMain=main -std=c99 -pedantic -Wall -O3 list.c -o list
 	./list
+
+tst: tst.h tst.c listC.h
+	gcc -DtstMain=main -std=c99 -pedantic -Wall -O3 tst.c list.c -o tst
+	./tst

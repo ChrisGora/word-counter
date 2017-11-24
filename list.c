@@ -376,7 +376,7 @@ static void testDelete() {
 	deleteAfter(l);
 	compare(l, "|");
 }
-
+/*
 static void manualErrorTest1() {
 	list *l = newList();
 	insertBefore(l, 3);
@@ -404,7 +404,7 @@ static void manualErrorTest4() {
     insertAfter(l, 6);
 	backward(l);
 }
-
+*/
 int listMain() {
     testNew();
     testStart();
