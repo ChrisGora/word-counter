@@ -49,9 +49,20 @@ tst *newTst() {
 	return t;
 }
 
-//TODO: Turn a sentinel into a normal node and add missing sentinels
+//Turn a sentinel into a normal node and add missing sentinels
 static void createNode(node *n, int x, char c) {
-	
+	n->sentinel = false;
+	node *senLeft = malloc(sizeof(node));
+	node *senMiddle = malloc(sizeof(node));
+	node *senRight = malloc(sizeof(node));
+	*senLeft = (node) {-1, '0', NULL, NULL, NULL, n, true, false};
+	*senMiddle = (node) {-1, '0', NULL, NULL, NULL, n, true, false};
+	*senRight = (node) {-1, '0', NULL, NULL, NULL, n, true, false};
+	n->left = senLeft;
+	n->middle = senMiddle;
+	n->right = senRight;
+	n->x = x;
+	n->c = c;
 }
 
 void insertString(tst *t, int x, char *c) {

@@ -2,6 +2,7 @@ battle
 oxo
 text
 list
+tst
 *.c~
 *.*~
 *.nfs*

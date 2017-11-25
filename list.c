@@ -97,14 +97,17 @@ void insertAfter(list *l, item x) {
 	backward(l);
 }
 
+//TODO: Add errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 item getBefore(list *l) {
-    node *current = l->position;
-	node *before = current->prev;
-	return before->x;
+  node *current = l->position;
+	node *left = current->prev;
+  if (left->sentinel) fail("You are at the start of the list");
+	return left->x;
 }
 
 item getAfter(list *l) {
-    node *current = l->position;
+  node *current = l->position;
+  if (current->sentinel) fail("You are at the end of the list");
 	return current->x;
 }
 
@@ -112,28 +115,24 @@ void setBefore(list *l, item x) {
 	node *current = l->position;
 	node *left = current->prev;
 	if (left->sentinel) fail("You are at the start of the list");
-	else {
-		left->x = x;
-	}
+	else left->x = x;
 }
 
 void setAfter(list *l, item x) {
 	node *current = l->position;
 	if (current->sentinel) fail("You are at the end of the list");
-	else {
-		current->x = x;
-	}
+	else current->x = x;
 }
 
 void deleteBefore(list *l) {
-    node *right = l->position;
-    node *delete = right->prev;
+  node *right = l->position;
+  node *delete = right->prev;
 	node *left = delete->prev;
 	if (!(delete->sentinel)) {
 		free(delete);
-    	right->prev = left;
-    	left->next = right;
-    	l->length = l->length - 1;
+    right->prev = left;
+    left->next = right;
+    l->length = l->length - 1;
 		updateStart(l);
 	}
 	else fail("You are at the start of the list");
@@ -163,7 +162,7 @@ static void assertElementsForward(list *l, char* c) {
 	int length = strlen(c);
 	node *current = l->start;
 	while (i < length) {
-		if (c[i] != '|') {			
+		if (c[i] != '|') {
 			int fromArray = c[i] - '0';
 			int fromList = current->x;
 			printf("fromArray %d \n", fromArray);
