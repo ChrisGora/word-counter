@@ -1,0 +1,2 @@
+This is a test file for the count program. This will count words.
+This is testing. Testing. Much more testing. Hopefully this will work.

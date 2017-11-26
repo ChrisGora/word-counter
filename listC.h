@@ -12,7 +12,7 @@ The lists provided by this module are not thread safe.
 #include <stdbool.h>
 
 // The type of items stored in the list. Change this for different applications.
-typedef int item;
+typedef char item;
 
 // The list type is opaque (declared here, and defined in list.c).
 struct list;
