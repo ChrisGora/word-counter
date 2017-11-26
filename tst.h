@@ -14,10 +14,9 @@ tst *newTst();
 // Insert a string into a TST. It is illegal to inser a string that already exists.
 void insertString(tst *t, int x, char *c);
 
-// Search for a string and return its associated value if found, or NULL if not found.
+// Search for a string and return its associated value if found, or -1 if not found.
 int search(tst *t, char *c);
 
-// Remove a string by setting its value to NULL. If possible also remove any 
-// unused nodes. 
+// Remove a string by setting its value to NULL. If possible also remove any
+// unused nodes.
 void removeString(tst *t, char *c);
-

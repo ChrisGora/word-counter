@@ -99,8 +99,10 @@ void insertAfter(list *l, item x) {
 
 //TODO: Add errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 item getBefore(list *l) {
-  backward(l);
-  return getAfter(l);
+  node *current = l->position;
+	node *left = current->prev;
+  if (left->sentinel) fail("You are at the start of the list");
+	return left->x;
 }
 
 item getAfter(list *l) {
