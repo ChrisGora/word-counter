@@ -145,6 +145,10 @@ void deleteAfter(list *l) {
 	deleteBefore(l);
 }
 
+int getLength(list *l) {
+    return l->length;
+}
+
 //------------------------------------------------------------------------------
 
 static void assertPosition(list *l, char* c) {

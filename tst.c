@@ -1,5 +1,4 @@
 #include "tst.h"
-#include "listC.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +20,6 @@ typedef struct node node;
 
 struct tst {
 	node *first;
-	list *allNodes;
 };
 
 //------------------------------------------------------------------------------
@@ -35,8 +33,6 @@ tst *newTst() {
 	tst *t = malloc(sizeof(tst));
 	node *start = malloc(sizeof(node));
 	*start = (node) {-1, '0', NULL, NULL, NULL, NULL, true};
-	list *l = newList();
-	t->allNodes = l;
 	t->first = start;
 	return t;
 }
@@ -61,15 +57,15 @@ static node *chooseNextNode(char c, node* current) {
 	node *n = NULL;
 	if (c == current->c) {
 		n = current->middle;
-		printf("Chose Middle\n");
+		//printf("Chose Middle\n");
 	}
 	else if (c < current->c) {
 		n = current->left;
-		printf("Chose Left\n");
+		//printf("Chose Left\n");
 	}
 	else if (c > current->c) {
 		n = current->right;
-		printf("Chose Right\n");
+		//printf("Chose Right\n");
 	}
 	return n;
 }
@@ -107,7 +103,7 @@ static node *findNode(tst *t, char *c) {
 	node *n = t->first;
 	node *current = NULL;
 	while ((! done) && (i < stringLength)) {
-		printf("c[i] = %c\n", c[i]);
+		//printf("c[i] = %c\n", c[i]);
 		current = n;
 		n = chooseNextNode(c[i], current);
 		bool A = n == current->middle;
@@ -123,46 +119,51 @@ int search(tst *t, char *c) {
 	node *n = findNode(t, c);
 	if (n == NULL) fail("Not found");
 	if (n->x == -1) fail("Not found");
-	printf("%d\n", n->x);
+	//printf("%d\n", n->x);
 	return n->x;
 }
 
 static void doOnlyLeft(node *n, node *left, node *middle, node *right) {
-	printf("Only Left\n");
+	//printf("Only Left\n");
 	n->prev->middle = left;
+	left->prev = n->prev;
 	free(middle);
 	free(right);
 	free(n);
 }
 
 static void doOnlyRight(node *n, node *left, node *middle, node *right) {
-	printf("Only Right\n");
+	//printf("Only Right\n");
 	n->prev->middle = right;
+	right->prev = n->prev;
 	free(middle);
 	free(left);
 	free(n);
 }
 
 static void doBothLeftAndRight(node *n, node *left, node *middle, node *right) {
-	printf("Both\n");
+	//printf("Both\n");
 	n->prev->middle = left;
+	left->prev = n->prev;
 	free(middle);
 	if (right->c > left->c) {
 		left->right = right;
+		right->prev = left;
 	}
 	if (right->c < left->c) {
 		left->left = right;
+		right->prev = left;
 	}
 	free(n);
 }
 
-static void doNone(node *n, node *left, node *middle, node *right) {
-	printf("None\n");
+static node *doNone(node *n, node *left, node *middle, node *right) {
+	//printf("None\n");
 	free(left);
 	free(middle);
 	free(right);
 	*n = (node) {-1, '0', NULL, NULL, NULL, n->prev, true};
-	n = n->prev;
+	return n = n->prev;
 }
 
 void removeString(tst *t, char *c) {
@@ -170,7 +171,7 @@ void removeString(tst *t, char *c) {
 	if (n == NULL) fail("Not found");
 	if (n->x == -1) fail("Not found");
 	while (true) {
-		printf("Current node x = %d\n", n->x);
+		//printf("Current node x = %d\n", n->x);
 		node *left = n->left, *middle = n->middle, *right = n->right;
 		bool lS = left->sentinel, mS = middle->sentinel, rS = right->sentinel;
 		//which nodes are in use?
@@ -190,7 +191,7 @@ void removeString(tst *t, char *c) {
 			doBothLeftAndRight(n, left, middle, right);
 			break;
 		}
-		else if (none) doNone(n, left, middle, right);
+		else if (none) n = doNone(n, left, middle, right);
 		else if (middleOrMore) break;
 	}
 }
@@ -230,7 +231,7 @@ static void testNew() {
 	compare(t, "#g5L*");
 	compare(t, "#g5M*");
 	compare(t, "#g5R*");
-	printf("testNew passed #################\n\n");
+	printf("testNew passed \n");
 }
 
 static void testInsert() {
@@ -248,7 +249,7 @@ static void testInsert() {
 	compare(t, "aRoLgMaMmMbRe3M*");
 	insertString(t, 9, "gamers");
 	compare(t, "aRoLgMaMmMbReMrMs9M*");
-	printf("testInsert passed #################\n");
+	printf("testInsert passed \n");
 }
 
 static void testSearch() {
@@ -267,7 +268,7 @@ static void testSearch() {
 	assert(search(t, "gamers") == 9);
 	assert(findNode(t, "gamerz") == NULL);
 	//search(t, "gamer");
-	printf("testSearch passed #################\n");
+	printf("testSearch passed \n");
 }
 
 static void testRemove() {
@@ -299,7 +300,7 @@ static void testRemove() {
 	compare(r, "#eMaMxL*");
 	compare(r, "#eMaRcR*");
 	compare(r, "#eMaRcMoR*");
-	printf("testRemove passed #################\n");
+	printf("testRemove passed \n");
 }
 
 static void stressTest() {
@@ -343,7 +344,7 @@ static void stressTest() {
 	assert(search(t, "tap") == 345);
 	assert(search(t, "ago") == 8433);
 	assert(search(t, "men") == 7);
-
+	printf("stressTest passed \n");
 }
 
 int tstMain() {

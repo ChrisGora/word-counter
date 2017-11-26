@@ -12,7 +12,7 @@ The lists provided by this module are not thread safe.
 #include <stdbool.h>
 
 // The type of items stored in the list. Change this for different applications.
-typedef struct node* item;
+typedef char item;
 
 // The list type is opaque (declared here, and defined in list.c).
 struct list;
@@ -56,3 +56,6 @@ void setAfter(list *l, item x);
 // deleteBefore when at the start, or deleteAfter when at the end.
 void deleteBefore(list *l);
 void deleteAfter(list *l);
+
+//Find length of the list
+int getLength(list *l);

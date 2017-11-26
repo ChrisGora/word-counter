@@ -3,6 +3,7 @@ oxo
 text
 list
 tst
+count
 *.c~
 *.*~
 *.nfs*
