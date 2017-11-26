@@ -8,6 +8,9 @@ This avoids using a large number of NULL pointers as with an R-way Trie
 struct tst;
 typedef struct tst tst;
 
+struct node;
+typedef struct node node;
+
 // Create a new empty TST and return a pointer to it.
 tst *newTst();
 
@@ -16,6 +19,12 @@ void insertString(tst *t, int x, char *c);
 
 // Search for a string and return its associated value if found, or -1 if not found.
 int search(tst *t, char *c);
+
+// Get a pointer to a node. NULL if not found.
+node *findNode(tst *t, char *c);
+
+// Change the x value of a given node.
+void amend(node *n, int x);
 
 // Remove a string by setting its value to NULL. If possible also remove any
 // unused nodes.

@@ -1,3 +1,5 @@
+// This is a TST Module
+
 #include "tst.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -16,8 +18,6 @@ struct node {
 	bool sentinel;
 };
 
-typedef struct node node;
-
 struct tst {
 	node *first;
 };
@@ -26,7 +26,7 @@ struct tst {
 
 static void fail(char *m) {
 	fprintf(stderr, "%s\n", m);
-	exit(1);
+	//exit(1);
 }
 
 tst *newTst() {
@@ -94,35 +94,49 @@ void insertString(tst *t, int x, char *c) {
 			current = n;
 		}
 	}
+	//printf("Inserted %s\n", c);
 }
 
-static node *findNode(tst *t, char *c) {
+node *findNode(tst *t, char *c) {
 	int i = 0;
 	int stringLength = strlen(c);
 	bool done = false;
 	node *n = t->first;
 	node *current = NULL;
 	while ((! done) && (i < stringLength)) {
+		//printf("strlen %d\n", stringLength);
 		//printf("c[i] = %c\n", c[i]);
+		if (c[i] == '\n') printf("got it \n");
 		current = n;
 		n = chooseNextNode(c[i], current);
 		bool A = n == current->middle;
-		bool B = n->sentinel;
+		bool B;
+		if (current->sentinel) B = true;
+		else B = n->sentinel;
 		if (A) i++;
 		if (B) done = true;
 		if (!A && B) current = NULL;
 	}
-	return current;
+	if (i + 1 < stringLength) return NULL;
+	else return current;
 }
 
 int search(tst *t, char *c) {
 	node *n = findNode(t, c);
-	if (n == NULL) fail("Not found");
-	if (n->x == -1) fail("Not found");
-	//printf("%d\n", n->x);
-	return n->x;
+	int r = - 1;
+	if ((n != NULL) && (n->x != - 1)) r = n->x;
+	return r;
 }
-
+/*
+int search(tst *t, char *c) {
+	node *n = findNode(t, c);
+	int r = - 1;
+	if (n == NULL) fail("Not found");
+	else if (n->x == -1) fail("Not found");
+	else r = n->x;
+	return r;
+}
+*/
 static void doOnlyLeft(node *n, node *left, node *middle, node *right) {
 	//printf("Only Left\n");
 	n->prev->middle = left;
@@ -195,6 +209,11 @@ void removeString(tst *t, char *c) {
 		else if (middleOrMore) break;
 	}
 }
+
+void amend(node *n, int x) {
+	n->x = x;
+}
+
 //------------------------------------------------------------------------------
 
 // L, M, R - follow left, middle or right pointer

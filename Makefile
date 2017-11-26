@@ -10,4 +10,8 @@ tst: tst.h tst.c listC.h
 
 count: count.c tst.h listC.h
 	gcc -std=c99 -pedantic -Wall -O3 count.c tst.c list.c -o count
-	./count t
+	./count
+
+countD: count.c tst.h listC.h
+	gcc -std=c99 -pedantic -Wall -O3 count.c tst.c list.c -o count
+	./count d

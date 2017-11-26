@@ -1,3 +1,5 @@
+// This is a module implementing lists
+
 #include "list.h"
 #include <stdbool.h>
 #include <stdio.h>
@@ -97,7 +99,6 @@ void insertAfter(list *l, item x) {
 	backward(l);
 }
 
-//TODO: Add errors!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 item getBefore(list *l) {
   node *current = l->position;
 	node *left = current->prev;
@@ -125,14 +126,14 @@ void setAfter(list *l, item x) {
 }
 
 void deleteBefore(list *l) {
-  node *right = l->position;
-  node *delete = right->prev;
+  	node *right = l->position;
+  	node *delete = right->prev;
 	node *left = delete->prev;
 	if (!(delete->sentinel)) {
 		free(delete);
-    right->prev = left;
-    left->next = right;
-    l->length = l->length - 1;
+    	right->prev = left;
+    	left->next = right;
+    	l->length = l->length - 1;
 		updateStart(l);
 	}
 	else fail("You are at the start of the list");
@@ -155,8 +156,8 @@ static void assertPosition(list *l, char* c) {
 	node *current = l->position;
 	node *prev = current->prev;
 	int posArray = strstr(c, "|") - c;
-	printf("%c \n", c[posArray]);
-	printf("posArray %d\n", posArray);
+	//printf("%c \n", c[posArray]);
+	//printf("posArray %d\n", posArray);
 	if (!(current->sentinel)) assert(c[posArray + 1] - '0' == current->x);
 	if (!(prev->sentinel)) assert(c[posArray - 1] - '0' == current->prev->x);
 }
@@ -169,8 +170,8 @@ static void assertElementsForward(list *l, char* c) {
 		if (c[i] != '|') {
 			int fromArray = c[i] - '0';
 			int fromList = current->x;
-			printf("fromArray %d \n", fromArray);
-			printf("fromList %d \n", fromList);
+			//printf("fromArray %d \n", fromArray);
+			//printf("fromList %d \n", fromList);
 			assert(fromArray == fromList);
 			current = current->next;
 		}
@@ -185,8 +186,8 @@ static void assertElementsBackward(list *l, char* c) {
 		if (c[length] != '|') {
 			int fromArray = c[length] - '0';
 			int fromList = current->x;
-			printf("fromArray %d \n", fromArray);
-			printf("fromList %d \n", fromList);
+			//printf("fromArray %d \n", fromArray);
+			//printf("fromList %d \n", fromList);
 			assert(fromArray == fromList);
 			current = current->prev;
 		}
@@ -378,6 +379,8 @@ static void testDelete() {
 	compare(l, "|2");
 	deleteAfter(l);
 	compare(l, "|");
+	assert(atStart(l) == true);
+	assert(atEnd(l) == true);
 }
 /*
 static void manualErrorTest1() {
