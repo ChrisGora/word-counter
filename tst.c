@@ -34,21 +34,10 @@ static void fail(char *m) {
 tst *newTst() {
 	tst *t = malloc(sizeof(tst));
 	node *start = malloc(sizeof(node));
-//	node *senLeft = malloc(sizeof(node));
-//	node *senMiddle = malloc(sizeof(node));
-//	node *senRight = malloc(sizeof(node));
-//	*senLeft = (node) {-1, '0', NULL, NULL, NULL, start, true};
-//	*senMiddle = (node) {-1, '0', NULL, NULL, NULL, start, true};
-//	*senRight = (node) {-1, '0', NULL, NULL, NULL, start, true};
-//	*start = (node) {-1, '0', senLeft, senMiddle, senRight, NULL, true};
 	*start = (node) {-1, '0', NULL, NULL, NULL, NULL, true};
 	list *l = newList();
 	t->allNodes = l;
 	t->first = start;
-	/*insertBefore(l, start);
-	insertBefore(l, senLeft);
-	insertBefore(l, senMiddle);
-	insertBefore(l, senRight);*/
 	return t;
 }
 
@@ -138,6 +127,44 @@ int search(tst *t, char *c) {
 	return n->x;
 }
 
+static void doOnlyLeft(node *n, node *left, node *middle, node *right) {
+	printf("Only Left\n");
+	n->prev->middle = left;
+	free(middle);
+	free(right);
+	free(n);
+}
+
+static void doOnlyRight(node *n, node *left, node *middle, node *right) {
+	printf("Only Right\n");
+	n->prev->middle = right;
+	free(middle);
+	free(left);
+	free(n);
+}
+
+static void doBothLeftAndRight(node *n, node *left, node *middle, node *right) {
+	printf("Both\n");
+	n->prev->middle = left;
+	free(middle);
+	if (right->c > left->c) {
+		left->right = right;
+	}
+	if (right->c < left->c) {
+		left->left = right;
+	}
+	free(n);
+}
+
+static void doNone(node *n, node *left, node *middle, node *right) {
+	printf("None\n");
+	free(left);
+	free(middle);
+	free(right);
+	*n = (node) {-1, '0', NULL, NULL, NULL, n->prev, true};
+	n = n->prev;
+}
+
 void removeString(tst *t, char *c) {
 	node *n = findNode(t, c);
 	if (n == NULL) fail("Not found");
@@ -146,52 +173,25 @@ void removeString(tst *t, char *c) {
 		printf("Current node x = %d\n", n->x);
 		node *left = n->left, *middle = n->middle, *right = n->right;
 		bool lS = left->sentinel, mS = middle->sentinel, rS = right->sentinel;
-		//which nodes are not empty?
+		//which nodes are in use?
 		bool onlyLeft = !lS && mS && rS, onlyRight = !rS && mS && lS;
 		bool middleOrMore = !mS;
 		bool bothLeftAndRight = !lS && mS && !rS;
 		bool none = lS && mS && rS;
 		if (onlyLeft) {
-			printf("Only Left\n");
-			n->prev->middle = left;
-			free(middle);
-			free(right);
-			free(n);
+			doOnlyLeft(n, left, middle, right);
 			break;
 		}
 		else if (onlyRight) {
-			printf("Only Right\n");
-			n->prev->middle = right;
-			free(middle);
-			free(left);
-			free(n);
+			doOnlyRight(n, left, middle, right);
 			break;
 		}
 		else if (bothLeftAndRight) {
-			printf("Both\n");
-			n->prev->middle = left;
-			free(middle);
-			if (right->c > left->c) {
-				left->right = right;
-			}
-			if (right->c < left->c) {
-				left->left = right;
-			}
-			free(n);
+			doBothLeftAndRight(n, left, middle, right);
 			break;
 		}
-		else if (none) {
-			printf("None\n");
-			free(left);
-			free(middle);
-			free(right);
-			*n = (node) {-1, '0', NULL, NULL, NULL, n->prev, true};
-			n = n->prev;
-		}
-		else if (middleOrMore) {
-			printf("Middle or more\n");
-			break;
-		}
+		else if (none) doNone(n, left, middle, right);
+		else if (middleOrMore) break;
 	}
 }
 //------------------------------------------------------------------------------
@@ -201,14 +201,14 @@ void removeString(tst *t, char *c) {
 //  * - assert this is a sentinel
 //  # - assert this is NOT a sentinel
 static bool compare(tst *t, char *s) {
-	printf("Now checking: %s \n\n", s);
+	//printf("Now checking: %s \n\n", s);
 	int i = 0;
 	int length = strlen(s);
 	node *current = t->first;
 	while (i < length) {
-		printf("i = %d\n", i);
-		printf("s[i] = %c\n", s[i]);
-		printf("Tree->c says %c\n", current->c);
+		//printf("i = %d\n", i);
+		//printf("s[i] = %c\n", s[i]);
+		//printf("Tree->c says %c\n", current->c);
 		if ((s[i] >= 'a') && (s[i] <= 'z')) assert(current->c == s[i]);
 		if ((s[i] >= '0') && (s[i] <= '9')) assert(current->x == (s[i] - '0'));
 		if (s[i] == '*') assert(current->sentinel == true);
@@ -216,10 +216,10 @@ static bool compare(tst *t, char *s) {
 		if (s[i] == 'L') current = current->left;
 		if (s[i] == 'M') current = current->middle;
 		if (s[i] == 'R') current = current->right;
-		printf("step %d passed\n\n", i);
+		//printf("step %d passed\n\n", i);
 		i++;
 	}
-	printf("%s PASSED \n\n\n\n", s);
+	//printf("%s PASSED \n\n\n\n", s);
 	return true;
 }
 
@@ -230,18 +230,6 @@ static void testNew() {
 	compare(t, "#g5L*");
 	compare(t, "#g5M*");
 	compare(t, "#g5R*");
-	/*list *l = t->allNodes;
-	node *s = t->first;
-	start(l);
-	assert(atStart(l));
-	assert(s == getAfter(l));
-	forward(l);
-	assert((s->left) == getAfter(l));
-	forward(l);
-	assert(s->middle == getAfter(l));
-	forward(l);
-	assert(s->right == getAfter(l));
-	forward(l);*/
 	printf("testNew passed #################\n\n");
 }
 
@@ -314,11 +302,56 @@ static void testRemove() {
 	printf("testRemove passed #################\n");
 }
 
+static void stressTest() {
+	tst *t = newTst();
+	insertString(t, 7, "now");
+	insertString(t, 4, "for");
+	insertString(t, 2, "tip");
+	insertString(t, 1, "ilk");
+	insertString(t, 8, "dim");
+	insertString(t, 9, "tag");
+	insertString(t, 34, "jot");
+	insertString(t, 456, "sob");
+	insertString(t, 3, "nob");
+	insertString(t, 1, "sky");
+	insertString(t, 89, "hut");
+	insertString(t, 45, "ace");
+	insertString(t, 2, "bet");
+	insertString(t, 7, "men");
+	insertString(t, 6, "egg");
+	insertString(t, 4, "few");
+	insertString(t, 3, "jay");
+	insertString(t, 9, "owl");
+	insertString(t, 45, "joy");
+	insertString(t, 23, "rap");
+	insertString(t, 234, "gig");
+	insertString(t, 578, "wee");
+	insertString(t, 3, "was");
+	insertString(t, 1, "cab");
+	insertString(t, 6, "wad");
+	insertString(t, 8, "caw");
+	insertString(t, 5, "cue");
+	insertString(t, 476, "fee");
+	insertString(t, 345, "tap");
+	insertString(t, 8433, "ago");
+	insertString(t, 54, "tar");
+	insertString(t, 23, "jam");
+	insertString(t, 21, "dug");
+	insertString(t, 50, "and");
+	compare(t, "nLfRiMlMk1M*");
+	compare(t, "nLfLdReMgMg6M*");
+	assert(search(t, "tap") == 345);
+	assert(search(t, "ago") == 8433);
+	assert(search(t, "men") == 7);
+
+}
+
 int tstMain() {
 	testNew();
 	testInsert();
 	testSearch();
 	testRemove();
+	stressTest();
 	printf("ALL TESTS PASSED\n");
 	return 0;
 }
